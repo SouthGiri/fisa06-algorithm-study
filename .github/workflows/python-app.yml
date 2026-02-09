@@ -32,5 +32,13 @@ jobs:
           git config --global user.name "study-bot"
           git config --global user.email "bot@github.com"
           git add README.md
-          git commit -m "docs: update weekly study progress" || echo "No changes to commit"
-          git push
+          
+          # 변경사항이 있는지 확인 후 커밋
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs: update weekly study progress"
+            # 최신 코드를 가져오면서 내 커밋을 그 뒤로 붙임 (충돌 방지)
+            git pull --rebase origin main
+            git push
+          fi
