@@ -1,19 +1,21 @@
-name: Weekly Study Check & Update README
+name: Weekly Study Check
 
 on:
   schedule:
-    - cron: '0 0 * * 0'
-    - cron: '0 0 * * 1'
+    - cron: '0 0 * * 0' # 일요일 오전 9시 (KST)
+    - cron: '0 0 * * 1' # 월요일 오전 9시 (KST)
   workflow_dispatch:
 
 jobs:
   run-check:
     runs-on: ubuntu-latest
-    permissions: # README 업데이트를 위한 쓰기 권한
+    permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 0
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -22,15 +24,25 @@ jobs:
       - name: Install dependencies
         run: pip install requests
         
-      - name: Run Script
+      - name: Sync and Run Script
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: python check_progress.py
-        
-      - name: Commit and Push
         run: |
+          # 1. Git 설정 및 최신 코드 Pull (수정 전 클린 상태에서 수행)
           git config --global user.name "study-bot"
           git config --global user.email "bot@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+          git pull origin main --rebase
+          
+          # 2. 파이썬 실행 (README 파일 수정)
+          python check_progress.py
+          
+      - name: Commit and Push
+        run: |
           git add README.md
-          git commit -m "docs: update weekly study progress" || echo "No changes to commit"
-          git push
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs: update weekly study progress"
+            git push origin main
+          fi
