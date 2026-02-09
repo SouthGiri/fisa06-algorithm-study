@@ -1,10 +1,10 @@
-name: Weekly Study Check
+name: Daily Study Check
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # 일요일 오전 9시 (KST)
-    - cron: '0 0 * * 1' # 월요일 오전 9시 (KST)
-  workflow_dispatch:
+    # 매일 오전 9시 (KST) = UTC 00:00
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 수동 실행 버튼
 
 jobs:
   run-check:
@@ -28,13 +28,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # 1. Git 설정 및 최신 코드 Pull (수정 전 클린 상태에서 수행)
           git config --global user.name "study-bot"
           git config --global user.email "bot@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
           git pull origin main --rebase
-          
-          # 2. 파이썬 실행 (README 파일 수정)
           python check_progress.py
           
       - name: Commit and Push
@@ -43,6 +40,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "docs: update weekly study progress"
+            git commit -m "docs: update daily study progress"
             git push origin main
           fi

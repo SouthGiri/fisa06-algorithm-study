@@ -30,28 +30,33 @@ def main():
     kst = timezone(timedelta(hours=9))
     now_kst = datetime.now(timezone.utc).astimezone(kst)
     
-    day_of_week = now_kst.weekday() # 0:월, 6:일
+    day_of_week = now_kst.weekday() # 0:월, 1:화, ..., 6:일
     
-    # 2. 집계 기준 시간 계산 (지난주 월요일 09:00:00)
-    # 오늘이 월요일(0)이면 7일 전, 일요일(6)이면 6일 전
+    # 2. [집계 기준] 이번 주 월요일 오전 9시 계산
+    # 오늘이 월요일(0) 오전 9시 이후라면 오늘 09:00이 기준, 
+    # 그 외에는 지난 월요일 09:00이 기준이 되도록 설정
+    # (매일 9시 정각 실행 기준, '지난 월요일 09:00'부터의 누적치를 보여줌)
     days_to_subtract = day_of_week if day_of_week != 0 else 7
     start_dt = (now_kst - timedelta(days=days_to_subtract)).replace(hour=9, minute=0, second=0, microsecond=0)
     
-    # API 요청을 위한 ISO 포맷 (UTC 기준으로 변환하여 전달하는 것이 가장 정확함)
-    since = start_dt.astimezone(timezone.utc).replace(tzinfo=None).isoformat() + "Z"
+    # API 요청용 ISO 포맷 (UTC 00:00Z로 변환하여 누락 방지)
+    since = start_dt.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     
-    title = "📢 일요일 중간 점검" if day_of_week == 6 else "🏁 월요일 최종 결과"
-    
+    # 제목 결정
+    if day_of_week == 0: title = "🏁 월요일 최종 결과 (및 새 주 시작)"
+    elif day_of_week == 6: title = "📢 일요일 중간 점검"
+    else: title = f"📅 {now_kst.strftime('%A')} 현황 점검"
+
     table_rows = ""
     for m in MEMBERS:
         count = get_commits_count(m['owner'], m['repo'], since)
         status = "✅ 달성" if count >= 5 else f"❌ 미달 ({count}/5)"
         table_rows += f"| {m['name']} | {count} | {status} |\n"
 
-    # 3. 리드미 템플릿 생성 (한국 시간 표시)
+    # 3. README 생성
     readme_template = f"""# 🚀 코딩테스트 스터디 현황
 
-이 페이지는 매주 일요일/월요일 오전 9시(KST)에 자동으로 업데이트됩니다.
+이 페이지는 매일 오전 9시(KST)에 자동으로 업데이트됩니다.
 
 ## 📊 진행 상황 ({title})
 - **집계 기간**: {start_dt.strftime('%m/%d 09:00')} ~ **현재**: {now_kst.strftime('%m/%d 09:00')}
@@ -65,7 +70,7 @@ def main():
 
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme_template)
-    print(f"SUCCESS: README.md generated at {now_kst}")
+    print(f"SUCCESS: Daily README.md generated at {now_kst}")
 
 if __name__ == "__main__":
     main()
