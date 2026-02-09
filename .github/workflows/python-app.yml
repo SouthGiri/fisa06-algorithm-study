@@ -28,17 +28,25 @@ jobs:
         run: python check_progress.py
         
       - name: Commit and Push
+        env:
+          # 시크릿에 등록한 토큰을 환경 변수로 가져옵니다.
+          MY_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config --global user.name "study-bot"
           git config --global user.email "bot@github.com"
+          
+          # 1. 원격 저장소 주소에 토큰을 심어서 권한 문제를 원천 차단합니다.
+          git remote set-url origin https://x-access-token:${MY_TOKEN}@github.com/${{ github.repository }}.git
+          
+          # 2. 최신 내용을 가져옵니다. (rebase로 깔끔하게)
+          git pull origin main --rebase
+          
           git add README.md
           
-          # 변경사항이 있는지 확인 후 커밋
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
             git commit -m "docs: update weekly study progress"
-            # 최신 코드를 가져오면서 내 커밋을 그 뒤로 붙임 (충돌 방지)
-            git pull --rebase origin main
-            git push
+            # 3. 명시적으로 origin main에 푸시합니다.
+            git push origin main
           fi
