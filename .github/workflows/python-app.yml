@@ -2,18 +2,20 @@ name: Weekly Study Check & Update README
 
 on:
   schedule:
-    - cron: '0 0 * * 0'
-    - cron: '0 0 * * 1'
+    - cron: '0 0 * * 0' # 일요일 오전 9시 (KST)
+    - cron: '0 0 * * 1' # 월요일 오전 9시 (KST)
   workflow_dispatch:
 
 jobs:
   run-check:
     runs-on: ubuntu-latest
-    permissions: # README 업데이트를 위한 쓰기 권한
+    permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 0 # 히스토리 전체를 가져와서 충돌 방지
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -22,31 +24,26 @@ jobs:
       - name: Install dependencies
         run: pip install requests
         
+      - name: Setup Git
+        run: |
+          git config --global user.name "study-bot"
+          git config --global user.email "bot@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+
       - name: Run Script
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: python check_progress.py
         
-      - name: Commit and Push
-        env:
-          # 시크릿에 등록한 토큰을 환경 변수로 가져옵니다.
-          MY_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Sync and Push
         run: |
-          git config --global user.name "study-bot"
-          git config --global user.email "bot@github.com"
-          
-          # 1. 원격 저장소 주소에 토큰을 심어서 권한 문제를 원천 차단합니다.
-          git remote set-url origin https://x-access-token:${MY_TOKEN}@github.com/${{ github.repository }}.git
-          
-          # 2. 최신 내용을 가져옵니다. (rebase로 깔끔하게)
-          git pull origin main --rebase
-          
+          # 1. 파일이 실제로 바뀌었는지 확인
           git add README.md
-          
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "No changes detected in README.md. Skipping push."
           else
+            # 2. 푸시 직전에 최신 서버 내용을 가져와서 내 수정본을 맨 위에 올림
+            git pull origin main --rebase
             git commit -m "docs: update weekly study progress"
-            # 3. 명시적으로 origin main에 푸시합니다.
             git push origin main
           fi
