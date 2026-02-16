@@ -7,13 +7,13 @@
 
 | 이름 | 커밋 수 | 상태 |
 | :--- | :---: | :---: |
-| 유채린 | 0 | ❌ 미달 (0/5) |
-| 채윤지 | 0 | ❌ 미달 (0/5) |
-| 조성은 | 2 | ❌ 미달 (2/5) |
-| 전진우 | 4 | ❌ 미달 (4/5) |
-| 민채영 | 6 | ✅ 달성 |
-| 김태완 | 6 | ✅ 달성 |
-| 이남길 | 5 | ✅ 달성 |
+| [유채린](https://github.com/yuchael/baekjoon) | 0 | ❌ 미달 (0/5) |
+| [채윤지](https://github.com/Hayden-yoonji/coding_test) | 0 | ❌ 미달 (0/5) |
+| [조성은](https://github.com/Seongeun-Jo/Baekjoon_Python) | 2 | ❌ 미달 (2/5) |
+| [전진우](https://github.com/jjwoori123-lang/BaekjoonHub) | 4 | ❌ 미달 (4/5) |
+| [민채영](https://github.com/chaeng16/algorithm) | 6 | ✅ 달성 |
+| [김태완](https://github.com/codml/CodingTestForPythonAndSQL) | 6 | ✅ 달성 |
+| [이남길](https://github.com/SouthGiri/Algorithm_Practice) | 5 | ✅ 달성 |
 
 ---
-최근 업데이트: 2026-02-16 08:49:24 (KST)
+최근 업데이트: 2026-02-16 12:56:35 (KST)
