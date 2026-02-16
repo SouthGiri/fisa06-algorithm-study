@@ -51,7 +51,9 @@ def main():
     for m in MEMBERS:
         count = get_commits_count(m['owner'], m['repo'], since)
         status = "✅ 달성" if count >= 5 else f"❌ 미달 ({count}/5)"
-        table_rows += f"| {m['name']} | {count} | {status} |\n"
+        repo_url = f"https://github.com/{m['owner']}/{m['repo']}"
+        name_link = f"[{m['name']}]({repo_url})"
+        table_rows += f"| {name_link} | {count} | {status} |\n"
 
     # 3. README 생성
     readme_template = f"""# 🚀 코딩테스트 스터디 현황
