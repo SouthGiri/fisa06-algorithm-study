@@ -2,8 +2,8 @@
 
 이 페이지는 매일 오전 9시(KST)에 자동으로 업데이트됩니다.
 
-## 📊 진행 상황 (📅 Thursday 현황 점검)
-- **집계 기간**: 03/30 09:00 ~ **현재**: 04/02 09:00
+## 📊 진행 상황 (📅 Friday 현황 점검)
+- **집계 기간**: 03/30 09:00 ~ **현재**: 04/03 09:00
 
 | 이름 | 커밋 수 | 상태 |
 | :--- | :---: | :---: |
@@ -13,7 +13,7 @@
 | [전진우](https://github.com/jjwoori123-lang/BaekjoonHub) | 0 | ❌ 미달 (0/5) |
 | [민채영](https://github.com/chaeng16/algorithm) | 0 | ❌ 미달 (0/5) |
 | [김태완](https://github.com/codml/CodingTestForPythonAndSQL) | 0 | ❌ 미달 (0/5) |
-| [이남길](https://github.com/SouthGiri/Algorithm_Practice) | 0 | ❌ 미달 (0/5) |
+| [이남길](https://github.com/SouthGiri/Algorithm_Practice) | 5 | ✅ 달성 |
 
 ---
-최근 업데이트: 2026-04-02 08:55:31 (KST)
+최근 업데이트: 2026-04-03 08:57:18 (KST)
